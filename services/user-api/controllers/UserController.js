@@ -8,36 +8,16 @@
 
 const Controller = require('./Controller');
 const service = require('../services/UserService');
-const createUpdateUser = async (request, response) => {
-  await Controller.handleRequest(request, response, service.createUpdateUser);
+const usersGET = async (request, response) => {
+  await Controller.handleRequest(request, response, service.usersGET);
 };
 
-const deleteUser = async (request, response) => {
-  await Controller.handleRequest(request, response, service.deleteUser);
-};
-
-const getAllUsers = async (request, response) => {
-  await Controller.handleRequest(request, response, service.getAllUsers);
-};
-
-const loginUser = async (request, response) => {
-  await Controller.handleRequest(request, response, service.loginUser);
-};
-
-const logoutUser = async (request, response) => {
-  await Controller.handleRequest(request, response, service.logoutUser);
-};
-
-const updateUserRole = async (request, response) => {
-  await Controller.handleRequest(request, response, service.updateUserRole);
+const usersRegisterPOST = async (request, response) => {
+  await Controller.handleRequest(request, response, service.usersRegisterPOST);
 };
 
 
 module.exports = {
-  createUpdateUser,
-  deleteUser,
-  getAllUsers,
-  loginUser,
-  logoutUser,
-  updateUserRole,
+  usersGET,
+  usersRegisterPOST,
 };

@@ -11,7 +11,7 @@ class Controller {
      * send 200 and the payload as received in this method.
      */
     response.status(payload.code || 200);
-    if(payload.headers && payload.headers.length > 0) {
+    if (payload.headers && payload.headers.length > 0) {
       payload.headers.forEach(header => response.set(header));
     }
     const responsePayload = payload.payload !== undefined ? payload.payload : payload;
@@ -119,6 +119,7 @@ class Controller {
       const serviceResponse = await serviceOperation(this.collectRequestParams(request));
       Controller.sendResponse(response, serviceResponse);
     } catch (error) {
+      console.log(error)
       Controller.sendError(response, error);
     }
   }

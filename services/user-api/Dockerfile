@@ -8,7 +8,6 @@ WORKDIR /home/node/app
 # Install app dependencies
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
 # where available (npm@5+)
-ARG NPM_TOKEN
 COPY package*.json ./
 COPY .npmrc ./
 RUN chown -R node:node /home/node/app

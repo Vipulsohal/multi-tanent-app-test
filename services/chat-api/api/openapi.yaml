@@ -1,0 +1,110 @@
+openapi: 3.0.1
+info:
+  title: Chat Service
+  version: 1.0.0
+servers:
+- url: /
+paths:
+  /conversations:
+    post:
+      operationId: conversationsPOST
+      requestBody:
+        $ref: '#/components/requestBodies/inline_object'
+        content:
+          application/json:
+            schema:
+              properties:
+                users:
+                  items:
+                    type: string
+                  type: array
+                tenantId:
+                  type: string
+              type: object
+      responses:
+        "201":
+          description: Conversation created
+      summary: Create a conversation
+      tags:
+      - chat
+      x-eov-operation-handler: controllers/ChatController
+  /messages:
+    get:
+      operationId: messagesGET
+      parameters:
+      - explode: true
+        in: query
+        name: conversationId
+        required: true
+        schema:
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: tenantId
+        required: true
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          description: List of messages
+      summary: Get messages for a conversation
+      tags:
+      - chat
+      x-eov-operation-handler: controllers/ChatController
+    post:
+      operationId: messagesPOST
+      requestBody:
+        $ref: '#/components/requestBodies/inline_object_1'
+        content:
+          application/json:
+            schema:
+              properties:
+                conversationId:
+                  type: string
+                senderId:
+                  type: string
+                text:
+                  type: string
+                tenantId:
+                  type: string
+              type: object
+      responses:
+        "201":
+          description: Message sent
+      summary: Send a message
+      x-eov-operation-handler: controllers/DefaultController
+components:
+  requestBodies:
+    inline_object_1:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/inline_object_1'
+    inline_object:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/inline_object'
+  schemas:
+    inline_object_1:
+      properties:
+        conversationId:
+          type: string
+        senderId:
+          type: string
+        text:
+          type: string
+        tenantId:
+          type: string
+      type: object
+    inline_object:
+      properties:
+        users:
+          items:
+            type: string
+          type: array
+        tenantId:
+          type: string
+      type: object

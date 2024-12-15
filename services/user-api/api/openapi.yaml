@@ -29,7 +29,9 @@ paths:
         "201":
           description: User registered
       summary: Register a new user
-      x-eov-operation-handler: controllers/DefaultController
+      tags:
+      - user
+      x-eov-operation-handler: controllers/UserController
   /users:
     get:
       operationId: usersGET
@@ -45,7 +47,9 @@ paths:
         "200":
           description: List of users
       summary: Get users for a tenant
-      x-eov-operation-handler: controllers/DefaultController
+      tags:
+      - user
+      x-eov-operation-handler: controllers/UserController
 components:
   requestBodies:
     inline_object:

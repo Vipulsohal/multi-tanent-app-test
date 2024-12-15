@@ -8,16 +8,11 @@
 
 const Controller = require('./Controller');
 const service = require('../services/DefaultService');
-const usersGET = async (request, response) => {
-  await Controller.handleRequest(request, response, service.usersGET);
-};
-
-const usersRegisterPOST = async (request, response) => {
-  await Controller.handleRequest(request, response, service.usersRegisterPOST);
+const messagesPOST = async (request, response) => {
+  await Controller.handleRequest(request, response, service.messagesPOST);
 };
 
 
 module.exports = {
-  usersGET,
-  usersRegisterPOST,
+  messagesPOST,
 };

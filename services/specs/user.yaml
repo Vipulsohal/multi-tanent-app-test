@@ -5,6 +5,8 @@ info:
 paths:
   /users/register:
     post:
+      tags:
+        - user    
       summary: Register a new user
       requestBody:
         content:
@@ -28,6 +30,8 @@ paths:
 
   /users:
     get:
+      tags:
+        - user    
       summary: Get users for a tenant
       parameters:
         - name: tenantId
