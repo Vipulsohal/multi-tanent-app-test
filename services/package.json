@@ -1,0 +1,19 @@
+{
+  "name": "kritique-services",
+  "version": "1.0.0",
+  "description": "Kritique Services Project",
+  "main": "index.js",
+  "scripts": {
+    "review-api": "openapi-generator-cli generate -g nodejs-express-server -i specs/review.yaml -o review-api",
+    "user-api": "openapi-generator-cli generate -g nodejs-express-server -i specs/user.yaml -o user-api -validate-spec=false",
+    "config-api": "openapi-generator-cli generate -g nodejs-express-server -i specs/configuration.yaml -o configuration-api",
+    "question-api": "openapi-generator-cli generate -g nodejs-express-server -i specs/question.yaml -o question-api",
+    "generate": "npm run review-api && npm run user-api && npm run config-api && npm run question-api",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "@openapitools/openapi-generator-cli": "^2.1.16"
+  }
+}

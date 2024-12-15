@@ -1,0 +1,40 @@
+openapi: 3.0.1
+info:
+  title: User Management Service
+  version: 1.0.0
+paths:
+  /users/register:
+    post:
+      summary: Register a new user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+                tenantId:
+                  type: string
+                role:
+                  type: string
+      responses:
+        '201':
+          description: User registered
+
+  /users:
+    get:
+      summary: Get users for a tenant
+      parameters:
+        - name: tenantId
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of users

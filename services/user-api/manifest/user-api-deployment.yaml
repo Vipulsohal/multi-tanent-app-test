@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: user-api
+  name: user-api
+  namespace: kritique
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: user-api
+  template:
+    metadata:
+      labels:
+        app: user-api
+    spec:
+      containers:
+      - image: IMAGE_NAME
+        env:
+          - name: ENV_NAME
+            value: "ENVIRONMENT"
+          - name: LOG_LABEL
+            value: "user-api"
+          - name: LOG_LEVEL
+            value: "info"
+          - name: PUBSUB_TOPIC
+            value: "projects/PROJECT_ID_PLACEHOLDER/topics/kritique-ENVIRONMENT"
+          - name: SIGNUP_API_URL
+            value: "https://forms-{region}.unileversolutions.com/v3"
+          - name: WIDGET_URL
+            value: "WIDGET_URL_PLACEHOLDER"
+          - name: ALLOW_ORIGIN
+            value: ".unileversolutions.com,.kritique.io"
+          - name: POD_NAME
+            value: user-api
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          - name: CONFIG_API_URL
+            value: "http://configuration-api-clusterip:80"
+          - name: PROJECT_ID
+            value: "PROJECT_ID_PLACEHOLDER"
+          - name: KANA_API_ENDPOINT
+            value: "https://ldapservice.unileversolutions.com/LdapAuthenticationService.svc/Json/IsAuthenticated"
+          - name: TOOLBOX_LOGIN_URL
+            value: "TOOLBOX_LOGIN_URL_PLACEHOLDER"
+          - name: TOOLBOX_REGISTRATION_URL
+            value: "https://udhd.service-now.com/csm" 
+          - name: RELEASE_ID
+            value: "RELEASE_ID_PLACEHOLDER"           
+        imagePullPolicy: Always
+        name: user-api
+        resources:
+          limits:
+            cpu: 500m
+            ephemeral-storage: 1Gi
+            memory: 2Gi
+          requests:
+            cpu: 500m
+            ephemeral-storage: 1Gi
+            memory: 2Gi
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+      serviceAccountName: kritique-service
+      terminationGracePeriodSeconds: 30
+      
+      

@@ -1,0 +1,69 @@
+openapi: 3.0.1
+info:
+  title: User Management Service
+  version: 1.0.0
+servers:
+- url: /
+paths:
+  /users/register:
+    post:
+      operationId: usersRegisterPOST
+      requestBody:
+        $ref: '#/components/requestBodies/inline_object'
+        content:
+          application/json:
+            schema:
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+                tenantId:
+                  type: string
+                role:
+                  type: string
+              type: object
+      responses:
+        "201":
+          description: User registered
+      summary: Register a new user
+      x-eov-operation-handler: controllers/DefaultController
+  /users:
+    get:
+      operationId: usersGET
+      parameters:
+      - explode: true
+        in: query
+        name: tenantId
+        required: true
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          description: List of users
+      summary: Get users for a tenant
+      x-eov-operation-handler: controllers/DefaultController
+components:
+  requestBodies:
+    inline_object:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/inline_object'
+  schemas:
+    inline_object:
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        tenantId:
+          type: string
+        role:
+          type: string
+      type: object
