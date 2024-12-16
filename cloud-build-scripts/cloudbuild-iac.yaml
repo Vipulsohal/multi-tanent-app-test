@@ -1,0 +1,29 @@
+steps:
+  - name: 'hashicorp/terraform:1.0.0'
+    args:
+      - init
+      - '-input=false'
+    dir: '$_TYPE'     
+  - name: 'hashicorp/terraform:1.0.0'
+    args:
+      - '-c'
+      - terraform workspace select $_ENV-$_TYPE || terraform workspace new $_ENV-$_TYPE
+    id: Terraform Workspace Select
+    entrypoint: /bin/sh
+    dir: '$_TYPE'    
+  - name: 'hashicorp/terraform:1.0.0'
+    args:
+      - plan
+      - '-out=$_ENV-planfile'
+      - '-input=false'
+      - '--var-file=tfvars/$_ENV.tfvars'
+    dir: '$_TYPE'
+  - name: 'hashicorp/terraform:1.0.0'
+    args:
+      - apply
+      - '-input=false'
+      - '$_ENV-planfile'
+    dir: '$_TYPE'      
+timeout: 3000s
+options:
+  logging: CLOUD_LOGGING_ONLY

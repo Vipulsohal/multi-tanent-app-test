@@ -1,0 +1,33 @@
+steps:
+  #step 1
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+     'build',
+     '-t',
+     '$_REGION-docker.pkg.dev/$_PROJECT_ID/$_ARTIFACT_REGISTRY_NAME/$_ARTIFACT_REGISTRY_NAME:$COMMIT_SHA',
+     '-f',
+     '$_SERVICE_LOCATION/Dockerfile',
+     '--build-arg',
+     'NPM_TOKEN=$_NPM_TOKEN',
+     '$_SERVICE_LOCATION/'
+    ]
+  #step 2
+  - id: 'Image Push to GCR'
+    name: 'gcr.io/cloud-builders/docker'
+    args: [
+     'push',
+     '$_REGION-docker.pkg.dev/$_PROJECT_ID/$_ARTIFACT_REGISTRY_NAME/$_ARTIFACT_REGISTRY_NAME:$COMMIT_SHA'
+    ]
+  - name: gcr.io/cloud-builders/gcloud
+    args:
+      - pubsub
+      - topics
+      - publish
+      - 'projects/$_PROJECT_ID_BUILD/topics/$_PUBSUB_TOPIC'
+      - '--message=$COMMIT_SHA'
+      - '--attribute=manifestpath=$_SERVICE_LOCATION,triggerbranchname=$BRANCH_NAME,image=$_REGION-docker.pkg.dev/$_PROJECT_ID/$_ARTIFACT_REGISTRY_NAME/$_ARTIFACT_REGISTRY_NAME:$COMMIT_SHA'
+      - '--project'
+      - $_PROJECT_ID     
+options:
+  logging: GCS_ONLY      
+timeout: '4000s'

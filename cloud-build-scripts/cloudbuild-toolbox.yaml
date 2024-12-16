@@ -1,0 +1,27 @@
+steps:
+  - name: 'node:20'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        cd react-app
+        npm install --legacy-peer-deps
+        npm run build
+  - name: 'gcr.io/cloud-builders/gsutil'
+    args: ['-m', 'rsync', '-r', '-c', '-d', 'react-app/build', '$_BUCKET_NAME']
+
+  - name: 'cypress/browsers:node18.12.0-chrome107'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        cd e2e
+        sed -i 's|{X_API_KEY}|"C2C4E02F-788B-4619-8EEA-3CC3AA1FAAF3"|g' cypress.env.json
+        cat cypress.env.json
+        npm install
+        npm run pretest
+        npm run toolboxScriptsSanity
+        npm run posttest
+    id: cypress        
+options:
+  logging: GCS_ONLY
