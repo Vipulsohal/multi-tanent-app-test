@@ -60,7 +60,7 @@ class ExpressServer {
         validateResponses: false, // false by default
         validateSecurity: {
           handlers: {
-            UserKeyAuth: () => { },
+            UserKeyAuth: () => { return true },
           },
         },
       })

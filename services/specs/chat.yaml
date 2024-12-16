@@ -63,6 +63,9 @@ paths:
                     description: Timestamp of room creation.
         '400':
           description: Bad request due to missing or invalid data.
+      security:
+        - UserKeyAuth: []
+      x-roles: ["admin"]          
         
   /chat/rooms/{id}:
     get:
@@ -109,7 +112,10 @@ paths:
                           description: Timestamp of the message.
         '404':
           description: Room not found.
-        
+      security:
+        - UserKeyAuth: []
+      x-roles: ["admin"]
+      
   /chat/{roomId}/messages:
     post:
       tags:
@@ -145,8 +151,16 @@ paths:
           description: Message sent successfully.
         '400':
           description: Bad request due to missing or invalid data.
-
+      security:
+        - UserKeyAuth: []
+      x-roles: ["admin"]
+      
 components:
+  securitySchemes:
+    UserKeyAuth:
+      type: apiKey
+      name: x-auth-key
+      in: header
   schemas:
     ChatRoom:
       type: object
@@ -190,6 +204,3 @@ components:
           type: string
           format: date-time
           description: Timestamp when the message was sent.
-
-security:
-  - BearerAuth: []

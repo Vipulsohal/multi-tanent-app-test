@@ -6,8 +6,6 @@ info:
   version: 1.0.0
 servers:
 - url: /
-security:
-- BearerAuth: []
 paths:
   /chat/rooms:
     post:
@@ -46,9 +44,13 @@ paths:
           description: Chat room created successfully.
         "400":
           description: Bad request due to missing or invalid data.
+      security:
+      - UserKeyAuth: []
       summary: Create a new chat room for an organization.
       tags:
       - chat
+      x-roles:
+      - admin
       x-eov-operation-handler: controllers/ChatController
   /chat/rooms/{id}:
     get:
@@ -72,9 +74,13 @@ paths:
           description: Successfully retrieved messages for the chat room.
         "404":
           description: Room not found.
+      security:
+      - UserKeyAuth: []
       summary: Retrieve messages for a specific chat room.
       tags:
       - chat
+      x-roles:
+      - admin
       x-eov-operation-handler: controllers/ChatController
   /chat/{roomId}/messages:
     post:
@@ -111,9 +117,13 @@ paths:
           description: Message sent successfully.
         "400":
           description: Bad request due to missing or invalid data.
+      security:
+      - UserKeyAuth: []
       summary: Send a message to a specific chat room.
       tags:
       - chat
+      x-roles:
+      - admin
       x-eov-operation-handler: controllers/ChatController
 components:
   requestBodies:
@@ -273,3 +283,8 @@ components:
       - message
       - senderId
       type: object
+  securitySchemes:
+    UserKeyAuth:
+      in: header
+      name: x-auth-key
+      type: apiKey
