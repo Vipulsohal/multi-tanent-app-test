@@ -17,7 +17,7 @@ const OrganizationManagement = () => {
             <h2>Organization Management</h2>
             <ul>
                 {organizations.map((org) => (
-                    <li key={org.id}>{org.name}</li>
+                    <li key={org.id}>{org.description}</li>
                 ))}
             </ul>
         </div>

@@ -17,7 +17,7 @@ const ProjectManagement = () => {
             <h2>Project Management</h2>
             <ul>
                 {projects.map((project) => (
-                    <li key={project.id}>{project.name}</li>
+                    <li key={project.id}>{project.description}</li>
                 ))}
             </ul>
         </div>

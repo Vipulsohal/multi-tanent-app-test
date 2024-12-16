@@ -1,22 +1,24 @@
 import React, { useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { loginUser } from '../services/api';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
     const { login } = useContext(AuthContext);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
             const userData = await loginUser(email, password);
+
             login(userData);
-            history.push('/projects'); // Redirect to project management page
+            navigate('/')
         } catch (err) {
+            console.log(err)
             setError('Invalid credentials');
         }
     };

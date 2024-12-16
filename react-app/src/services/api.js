@@ -7,10 +7,9 @@ export const loginUser = async (email, password) => {
         email, password,
     }, {
         headers: {
-            'Content-Type': 'application/json', // Make sure this is set correctly
+            'Content-Type': 'application/json',
         }
     });
-
 
     return response.data; // Returns the JWT token and user data
 };
@@ -23,5 +22,5 @@ export const fetchProjects = async () => {
 
 export const fetchOrganizations = async () => {
     // const response = await axios.get(`${API_URL}/organizations`);
-    return [{ "id": "1", "name": "project 1", "description": " project 1 description  " }, { "id": "2", "name": "project 2", "description": "project 2 description asdd " }];
+    return [{ "id": "1", "name": "Org  1", "description": " project 1 description  " }, { "id": "2", "name": "org 2", "description": "project 2 description asdd " }];
 };

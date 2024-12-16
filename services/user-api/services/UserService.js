@@ -49,10 +49,13 @@ const getUserById = ({ id }) => new Promise(
 * */
 const loginUser = ({ inlineObject }) => new Promise(
   async (resolve, reject) => {
-    console.log("loginUser", inlineObject)
+    // console.log("loginUser", inlineObject)
     try {
       resolve(Service.successResponse({
-        inlineObject,
+        "id": "1",
+        "email": "test@test.com",
+        "role": "admin",
+        "organizationId": "org1"
       }));
     } catch (e) {
       reject(Service.rejectResponse(
