@@ -76,6 +76,7 @@ paths:
                     description: JWT token for authenticated requests.
         '401':
           description: Invalid email or password.
+          
 
   /users/{id}:
     get:

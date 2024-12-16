@@ -47,11 +47,12 @@ const getUserById = ({ id }) => new Promise(
 * inlineObject1 InlineObject1 
 * returns inline_response_200
 * */
-const loginUser = ({ inlineObject1 }) => new Promise(
+const loginUser = ({ inlineObject }) => new Promise(
   async (resolve, reject) => {
+    console.log("loginUser", inlineObject)
     try {
       resolve(Service.successResponse({
-        inlineObject1,
+        inlineObject,
       }));
     } catch (e) {
       reject(Service.rejectResponse(
