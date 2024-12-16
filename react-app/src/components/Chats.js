@@ -1,50 +1,87 @@
-import React, { useState, useEffect } from 'react';
-import io from 'socket.io-client';
+import React, { useState, useEffect } from "react";
 
-const socket = io('ws://your-socket-url'); // Replace with your WebSocket server URL
-
-const Chat = ({ roomId }) => {
-    const [message, setMessage] = useState('');
+const ChatApp = () => {
+    const [socket, setSocket] = useState(null);
+    const [room, setRoom] = useState("");
+    const [isroomJoined, setIsroomJoined] = useState(false);
+    const [message, setMessage] = useState("");
     const [messages, setMessages] = useState([]);
 
     useEffect(() => {
-        socket.emit('joinRoom', roomId);
+        const ws = new WebSocket("ws://localhost:8082");
 
-        socket.on('message', (msg) => {
+        ws.onopen = () => {
+            console.log("Connected to WebSocket server");
+        };
+
+        ws.onmessage = (event) => {
+            const msg = JSON.parse(event.data);
             setMessages((prevMessages) => [...prevMessages, msg]);
-        });
+        };
+
+        ws.onclose = () => {
+            console.log("WebSocket connection closed");
+        };
+
+        ws.onerror = (error) => {
+            console.error("WebSocket error:", error);
+        };
+
+        setSocket(ws);
 
         return () => {
-            socket.emit('leaveRoom', roomId);
-            socket.off('message');
+            ws.close();
         };
-    }, [roomId]);
+    }, []);
+
+    const joinRoom = () => {
+        setIsroomJoined(true)
+        if (socket) {
+            socket.send(JSON.stringify({ action: "join", room }));
+        }
+    };
 
     const sendMessage = () => {
-        if (message) {
-            socket.emit('sendMessage', { roomId, message });
-            setMessage('');
+        if (socket && message) {
+            socket.send(JSON.stringify({ action: "message", room, data: message }));
+            setMessage("");
         }
     };
 
     return (
         <div>
-            <div>
-                <h3>Chat Room</h3>
+            <h1>Chat Room</h1>
+            {room && isroomJoined ? (
+                <>
+                    <h2>Room: {room}</h2>
+                    <input
+                        type="text"
+                        placeholder="Type a message"
+                        value={message}
+                        onChange={(e) => setMessage(e.target.value)}
+                    />
+                    <button onClick={sendMessage}>Send</button>
+                    <ul>
+                        {messages.map((msg, index) => (
+                            <li key={index}>
+                                <strong>{msg.room}:</strong> {msg.message}
+                            </li>
+                        ))}
+                    </ul>
+                </>
+            ) : (
                 <div>
-                    {messages.map((msg, idx) => (
-                        <p key={idx}>{msg}</p>
-                    ))}
+                    <input
+                        type="text"
+                        placeholder="Enter room name"
+                        value={room}
+                        onChange={(e) => setRoom(e.target.value)}
+                    />
+                    <button onClick={joinRoom}>Join Room</button>
                 </div>
-            </div>
-            <input
-                type="text"
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-            />
-            <button onClick={sendMessage}>Send</button>
+            )}
         </div>
     );
 };
 
-export default Chat;
+export default ChatApp;

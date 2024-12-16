@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom'; // Import Routes, Ro
 import { AuthContext } from './context/AuthContext'; // Assuming AuthContext is properly set up
 import Login from './components/Login';
 import ProjectManagement from './components/ProjectsManagement';
+import ChatApp from './components/Chats';
 import OrganizationManagement from './components/OrganizationsManagement';
 import Header from './components/Header';
 import Home from './components/Home'
@@ -24,7 +25,10 @@ const App = () => {
                     <Route path="/projects" element={user ? <ProjectManagement /> : <Navigate to="/" />} />
 
                     {/* Route for /organizations, only accessible if the user is logged in */}
-                    <Route path="/organizations" element={user && user.role == "admin" ? <OrganizationManagement /> : <Navigate to="/" />} />
+                    <Route path="/organizations" element={user && user.role === "admin" ? <OrganizationManagement /> : <Navigate to="/" />} />
+
+                    {/* Route for /organizations, only accessible if the user is logged in */}
+                    <Route path="/chat" element={<ChatApp />} />
 
                     {/* Example of role-based redirection */}
                     <Route path="/admin" element={user && user.role === 'admin' ? <OrganizationManagement /> : <Navigate to="/" />} />

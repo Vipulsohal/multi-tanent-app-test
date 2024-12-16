@@ -22,6 +22,10 @@ const Header = () => {
                                 Organizations
                             </Link>
                         }
+                        <Link to="/chat" style={styles.link}>
+                            Chat
+                        </Link>
+
                     </>
                 )}
             </div>
