@@ -1,15 +1,13 @@
-const http = require("http");
-const fs = require("fs");
-const path = require("path");
-const swaggerUI = require("swagger-ui-express");
-const jsYaml = require("js-yaml");
-const express = require("express");
-const cors = require("cors");
-const cookieParser = require("cookie-parser");
-const OpenApiValidator = require("express-openapi-validator");
-const config = require("./config");
-
-
+/* eslint-disable linebreak-style */
+const http = require('http');
+const fs = require('fs');
+const path = require('path');
+const swaggerUI = require('swagger-ui-express');
+const jsYaml = require('js-yaml');
+const express = require('express');
+const cors = require('cors');
+const cookieParser = require('cookie-parser');
+const OpenApiValidator = require('express-openapi-validator');
 
 class ExpressServer {
   constructor(port, openApiYaml) {
@@ -34,8 +32,8 @@ class ExpressServer {
     this.app.use(express.json({ limit: '14MB' }));
     this.app.use(express.urlencoded({ extended: false }));
     this.app.use(cookieParser());
-    this.app.get("/user/health", (req, res) => res.send(process.env.RELEASE_ID ? process.env.RELEASE_ID : `OK`));
-    this.app.use("/user/api-docs", swaggerUI.serve, swaggerUI.setup(this.schema));
+    this.app.get('/user/health', (req, res) => res.send(process.env.RELEASE_ID ? process.env.RELEASE_ID : 'OK'));
+    this.app.use('/user/api-docs', swaggerUI.serve, swaggerUI.setup(this.schema));
   }
 
   launch() {
@@ -51,13 +49,13 @@ class ExpressServer {
             UserKeyAuth: () => { },
           },
         },
-      })
-    )
+      }),
+    );
     this.app.use((err, req, res, next) => {
       // format errors
       res.status(err.status || 500).json({
         message: err.message || err,
-        errors: err.errors || "",
+        errors: err.errors || '',
       });
     });
 

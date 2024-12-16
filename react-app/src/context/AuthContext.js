@@ -19,6 +19,7 @@ export const AuthProvider = ({ children }) => {
     const login = (userData) => {
         setUser(userData);
         console.log("userData", userData)
+
         localStorage.setItem('user', JSON.stringify(userData));
         navigate('/'); // Redirect to the projects page after login
     };

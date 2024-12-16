@@ -3,11 +3,13 @@ import { AuthContext } from '../context/AuthContext';
 import { loginUser } from '../services/api';
 import { useNavigate } from 'react-router-dom';
 
+
 const Login = () => {
     const { login } = useContext(AuthContext);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+
     const navigate = useNavigate();
 
     const handleLogin = async (e) => {
