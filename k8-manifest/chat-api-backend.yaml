@@ -1,0 +1,10 @@
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: chat-api-backend
+  namespace: multitanentapp
+spec:
+  healthCheck:
+    type: HTTP
+    requestPath: /chat/health
+    port: 8080

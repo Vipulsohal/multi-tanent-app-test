@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: chat-api
+  name: chat-api
+  namespace: multitanentapp
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: chat-api
+  template:
+    metadata:
+      labels:
+        app: chat-api
+    spec:
+      containers:
+      - image: <Image path>
+        env:
+          - name: ENV_NAME
+            value: "prod"
+          - name: LOG_LABEL
+            value: "chat-api"
+          - name: LOG_LEVEL
+            value: "info"
+          - name: PUBSUB_TOPIC
+            value: ""                              
+                
+        imagePullPolicy: Always
+        name: chat-api
+        resources:
+          limits:
+            cpu: 500m
+            ephemeral-storage: 1Gi
+            memory: 2Gi
+          requests:
+            cpu: 500m
+            ephemeral-storage: 1Gi
+            memory: 2Gi
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+      serviceAccountName: multitanentapp-service
+      terminationGracePeriodSeconds: 30

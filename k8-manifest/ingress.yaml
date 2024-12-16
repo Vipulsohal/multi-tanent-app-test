@@ -1,0 +1,54 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: multitanentappinress
+  namespace: multitanentapp
+  annotations:
+    networking.gke.io/v1beta1.FrontendConfig: "frontend-config"
+    networking.gke.io/managed-certificates: managed-cert-api
+    kubernetes.io/ingress.class: "gce"
+    kubernetes.io/ingress.allow-http: "false"
+spec:
+  defaultBackend:
+    service:
+      name: chat-api-clusterip
+      port:
+        number: 80
+  rules:
+  - http:
+      paths:
+      - path: /chat
+        pathType: Prefix
+        backend:
+          service:
+            name: chat-api-clusterip
+            port:
+              number: 80
+      - path: /chats
+        pathType: Prefix
+        backend:
+          service:
+            name: chat-api-clusterip
+            port:
+              number: 80
+      - path: /users
+        pathType: Prefix
+        backend:
+          service:
+            name: user-api-clusterip
+            port:
+              number: 80
+      - path: /organizations
+        pathType: Prefix
+        backend:
+          service:
+            name: user-api-clusterip
+            port:
+              number: 80
+      - path: /projects
+        pathType: Prefix
+        backend:
+          service:
+            name: user-api-clusterip
+            port:
+              number: 80              
