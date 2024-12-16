@@ -1,13 +1,12 @@
 const WebSocket = require("ws");
 const EventEmitter = require("events");
 
-// Create an in-memory event emitter to simulate Pub/Sub
+ //in-memory event emitter to simulate Pub/Sub
 const eventBus = new EventEmitter();
 
-// Configuration
 const PORT = 8082;
 
-// Initialize WebSocket server
+
 const wss = new WebSocket.Server({ port: PORT }, () => {
   console.log(`WebSocket server running on ws://localhost:${PORT}`);
 });
@@ -22,14 +21,14 @@ const broadcastToRoom = (room, message) => {
   });
 };
 
-// Subscribe to all events from the EventEmitter
+
 eventBus.on("broadcast", (payload) => {
   console.log(`Broadcasting to room: ${payload.room}, message: ${JSON.stringify(payload)}`);
   broadcastToRoom(payload.room, payload);
   broadcastToRoom(payload.room, {room:"User-1",message:"Answers from another user"});
 });
 
-// Handle WebSocket connections
+
 wss.on("connection", (ws) => {
   console.log("New client connected");
 
@@ -39,7 +38,6 @@ wss.on("connection", (ws) => {
 		console.log(action, room, data)	
       switch (action) {
         case "join":
-          // Client joins a room
           ws.room = room;
           ws.send(JSON.stringify({ message: `Joined room: ${room}` }));
           console.log(`Client joined room: ${room}`);
