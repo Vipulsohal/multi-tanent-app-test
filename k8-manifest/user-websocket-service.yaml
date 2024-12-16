@@ -1,0 +1,15 @@
+websocketVersion: v1
+kind: Service
+metadata:
+  name: user-websocket-clusterip
+  annotations:
+    cloud.google.com/backend-config: '{"default": "user-websocket-backend"}'
+  namespace: multitanentapp
+spec:
+  selector:
+    app: user-websocket
+  ports:
+  - name: tcp
+    port: 80
+    targetPort: 8082
+  type: ClusterIP
