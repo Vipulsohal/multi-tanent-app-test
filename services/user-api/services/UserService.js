@@ -47,13 +47,18 @@ const getUserById = ({ id }) => new Promise(
 * inlineObject1 InlineObject1 
 * returns inline_response_200
 * */
-const loginUser = ({ inlineObject1 }) => new Promise(
+const loginUser = (data) => new Promise(
   async (resolve, reject) => {
     try {
+      var emailId = data.body.email;
       resolve(Service.successResponse({
-        inlineObject1,
+        id: '1',
+        email: emailId,
+        role: emailId.includes('admin') ? 'admin' : 'member',
+        organizationId: 'org1',
       }));
     } catch (e) {
+      console.log(e)
       reject(Service.rejectResponse(
         e.message || 'Invalid input',
         e.status || 405,

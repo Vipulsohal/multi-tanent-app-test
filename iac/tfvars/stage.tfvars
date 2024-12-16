@@ -1,8 +1,6 @@
 # Provider Values
 project = ""
 region  = "europe-west3"
-
-
 identifier = "multiannentapp"
 env        = "stage"
 cert_domain = "origin-multiannentapp-react-app-stage.com"
@@ -14,7 +12,7 @@ service_accounts = [
     custom_role = false,
     sa_role = [
 		{ role = "roles/pubsub.editor"},
-		
+    ]
   },
   {
     sa_name     = "multiannentapp-react-app-readonly",
@@ -55,18 +53,9 @@ artifact_registries = [
   {
     artifact_registry_name        = "multiannentapp-question-api",
     artifactory_registry_location = "europe"
-  }"
+  }
 ]
-
-
-
-artifact_registry_and_trigger = true
-
-
-
-
 cloudbuild_triggers = [
-  
   {
     trigger_name                = "multiannentapp-user-api-build",
 	cloud_build_service_account = "multiannentapp-cloudbuild-sa@ul-ce-p-902672-prj.iam.gserviceaccount.com"
@@ -75,11 +64,6 @@ cloudbuild_triggers = [
     build_variables             = {}
     trigger_template = [{ branch_name = "master" }]
     build_steps = "cloudbuild.yaml"
-	trigger_github = [{
-      owner = "multiannentapp",
-      name = "multiannentapp",
-      branch_name = "^master$|^release/.*$"
-    }]
   },
   {
     trigger_name                = "multiannentapp-chat-api-build",
@@ -89,11 +73,7 @@ cloudbuild_triggers = [
     build_variables             = {}
     trigger_template = [{ branch_name = "master" }]
     build_steps = "cloudbuild.yaml"
-	trigger_github = [{
-      owner = "multiannentapp",
-      name = "multiannentapp",
-      branch_name = "^master$|^release/.*$"
-    }]
+
   },
   {
     trigger_name                = "multiannentapp-react-app-prod",
@@ -103,11 +83,5 @@ cloudbuild_triggers = [
 	build_variables             = {}
     trigger_template = [{ branch_name = "master" }]
     build_steps = "cloudbuild-react-app.yaml"
-	approval_required = true 
-	trigger_github = [{
-      owner = "multiannentapp",
-      name = "multiannentapp",
-      branch_name = "^master$"
-    }]
-  }
-]
+	approval_required = true}
+  ]

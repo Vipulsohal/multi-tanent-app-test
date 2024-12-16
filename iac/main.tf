@@ -69,26 +69,6 @@ module "artifactory-registry" {
 }
 
 
-
-module "service-accounts" {
-  source = "./modules/googleServiceAccountRole"
-
-  project         = var.project
-  for_each        = { for sa in var.service_accounts : sa.sa_name => sa }
-  service_account = each.value.sa_name
-  iam_role        = lookup(each.value, "sa_role", null)
-  #iam_condition    = lookup(each.value, "iam_condition", null)
-  custom_role      = lookup(each.value, "custom_role", null)
-  role_id          = lookup(each.value, "sa_role_id", null)
-  role_title       = lookup(each.value, "sa_role_title", null)
-  role_permissions = lookup(each.value, "sa_role_permission", null)
-}
-
-module "gcs" {
-  source  = "./modules/googleCloudStorage"
-  buckets = var.buckets
-}
-
 module "triggers" {
   source = "./modules/codeBuild"
 
