@@ -2,16 +2,16 @@
 const Service = require('./Service');
 
 /**
-* Get users for a tenant
+* Delete a user by ID.
 *
-* tenantId String 
+* id String The unique ID of the user to delete.
 * no response value expected for this operation
 * */
-const usersGET = ({ tenantId }) => new Promise(
+const deleteUser = ({ id }) => new Promise(
   async (resolve, reject) => {
     try {
       resolve(Service.successResponse({
-        tenantId,
+        id,
       }));
     } catch (e) {
       reject(Service.rejectResponse(
@@ -22,12 +22,52 @@ const usersGET = ({ tenantId }) => new Promise(
   },
 );
 /**
-* Register a new user
+* Get a user's details by ID.
 *
-* inlineObject InlineObject  (optional)
+* id String The unique ID of the user.
 * no response value expected for this operation
 * */
-const usersRegisterPOST = ({ inlineObject }) => new Promise(
+const getUserById = ({ id }) => new Promise(
+  async (resolve, reject) => {
+    try {
+      resolve(Service.successResponse({
+        id,
+      }));
+    } catch (e) {
+      reject(Service.rejectResponse(
+        e.message || 'Invalid input',
+        e.status || 405,
+      ));
+    }
+  },
+);
+/**
+* Authenticate a user and generate a JWT token.
+*
+* inlineObject1 InlineObject1 
+* returns inline_response_200
+* */
+const loginUser = ({ inlineObject1 }) => new Promise(
+  async (resolve, reject) => {
+    try {
+      resolve(Service.successResponse({
+        inlineObject1,
+      }));
+    } catch (e) {
+      reject(Service.rejectResponse(
+        e.message || 'Invalid input',
+        e.status || 405,
+      ));
+    }
+  },
+);
+/**
+* Register a new user.
+*
+* inlineObject InlineObject 
+* no response value expected for this operation
+* */
+const registerUser = ({ inlineObject }) => new Promise(
   async (resolve, reject) => {
     try {
       resolve(Service.successResponse({
@@ -41,8 +81,56 @@ const usersRegisterPOST = ({ inlineObject }) => new Promise(
     }
   },
 );
+/**
+* Update a user's details.
+*
+* id String The unique ID of the user.
+* inlineObject2 InlineObject2 
+* no response value expected for this operation
+* */
+const updateUser = ({ id, inlineObject2 }) => new Promise(
+  async (resolve, reject) => {
+    try {
+      resolve(Service.successResponse({
+        id,
+        inlineObject2,
+      }));
+    } catch (e) {
+      reject(Service.rejectResponse(
+        e.message || 'Invalid input',
+        e.status || 405,
+      ));
+    }
+  },
+);
+/**
+* Update a user's role.
+*
+* id String The unique ID of the user.
+* inlineObject3 InlineObject3 
+* no response value expected for this operation
+* */
+const updateUserRole = ({ id, inlineObject3 }) => new Promise(
+  async (resolve, reject) => {
+    try {
+      resolve(Service.successResponse({
+        id,
+        inlineObject3,
+      }));
+    } catch (e) {
+      reject(Service.rejectResponse(
+        e.message || 'Invalid input',
+        e.status || 405,
+      ));
+    }
+  },
+);
 
 module.exports = {
-  usersGET,
-  usersRegisterPOST,
+  deleteUser,
+  getUserById,
+  loginUser,
+  registerUser,
+  updateUser,
+  updateUserRole,
 };

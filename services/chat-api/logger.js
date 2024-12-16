@@ -6,7 +6,7 @@ const logger = createLogger({
     format.timestamp(),
     format.json(),
   ),
-  defaultMeta: { service: 'chat-service' },
+  defaultMeta: { service: 'user-service' },
   transports: [
     new transports.Console(),
     new transports.File({ filename: 'error.log', level: 'error', timestamp: true }),

@@ -1,73 +1,604 @@
-openapi: 3.0.1
+openapi: 3.0.0
 info:
-  title: User Management Service
+  description: API for managing users, roles, projects, and organizations for a multi-tenant
+    SaaS application.
+  title: Multi-Tenant SaaS Application API
   version: 1.0.0
 servers:
 - url: /
 paths:
   /users/register:
     post:
-      operationId: usersRegisterPOST
+      operationId: registerUser
       requestBody:
         $ref: '#/components/requestBodies/inline_object'
         content:
           application/json:
             schema:
               properties:
-                name:
-                  type: string
                 email:
+                  description: User's email address.
                   type: string
                 password:
-                  type: string
-                tenantId:
+                  description: User's password.
                   type: string
                 role:
+                  description: The role of the user (admin, member).
                   type: string
+                organizationId:
+                  description: Organization ID the user belongs to.
+                  type: string
+              required:
+              - email
+              - organizationId
+              - password
+              - role
               type: object
+        required: true
       responses:
         "201":
-          description: User registered
-      summary: Register a new user
+          description: Successfully registered the user.
+        "400":
+          description: Invalid input or missing required fields.
+      summary: Register a new user.
       tags:
       - user
       x-eov-operation-handler: controllers/UserController
-  /users:
-    get:
-      operationId: usersGET
+  /users/login:
+    post:
+      operationId: loginUser
+      requestBody:
+        $ref: '#/components/requestBodies/inline_object_1'
+        content:
+          application/json:
+            schema:
+              properties:
+                email:
+                  description: User's email address.
+                  type: string
+                password:
+                  description: User's password.
+                  type: string
+              required:
+              - email
+              - password
+              type: object
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+          description: Successfully authenticated the user and generated a token.
+        "401":
+          description: Invalid email or password.
+      summary: Authenticate a user and generate a JWT token.
+      tags:
+      - user
+      x-eov-operation-handler: controllers/UserController
+  /users/{id}:
+    delete:
+      operationId: deleteUser
       parameters:
-      - explode: true
-        in: query
-        name: tenantId
+      - description: The unique ID of the user to delete.
+        explode: false
+        in: path
+        name: id
         required: true
         schema:
           type: string
-        style: form
+        style: simple
       responses:
         "200":
-          description: List of users
-      summary: Get users for a tenant
+          description: Successfully deleted the user.
+        "404":
+          description: User not found.
+      summary: Delete a user by ID.
       tags:
       - user
       x-eov-operation-handler: controllers/UserController
+    get:
+      operationId: getUserById
+      parameters:
+      - description: The unique ID of the user.
+        explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          description: Successfully retrieved user details.
+        "404":
+          description: User not found.
+      summary: Get a user's details by ID.
+      tags:
+      - user
+      x-eov-operation-handler: controllers/UserController
+    put:
+      operationId: updateUser
+      parameters:
+      - description: The unique ID of the user.
+        explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        $ref: '#/components/requestBodies/inline_object_2'
+        content:
+          application/json:
+            schema:
+              properties:
+                email:
+                  description: The user's email address.
+                  type: string
+                role:
+                  description: The user's role.
+                  type: string
+              required:
+              - email
+              - role
+              type: object
+        required: true
+      responses:
+        "200":
+          description: Successfully updated the user's details.
+        "404":
+          description: User not found.
+      summary: Update a user's details.
+      tags:
+      - user
+      x-eov-operation-handler: controllers/UserController
+  /users/{id}/role:
+    put:
+      operationId: updateUserRole
+      parameters:
+      - description: The unique ID of the user.
+        explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        $ref: '#/components/requestBodies/inline_object_3'
+        content:
+          application/json:
+            schema:
+              properties:
+                role:
+                  description: The new role for the user (admin, member).
+                  type: string
+              required:
+              - role
+              type: object
+        required: true
+      responses:
+        "200":
+          description: Successfully updated the user's role.
+        "404":
+          description: User not found.
+      summary: Update a user's role.
+      tags:
+      - user
+      x-eov-operation-handler: controllers/UserController
+  /projects:
+    post:
+      operationId: createProject
+      requestBody:
+        $ref: '#/components/requestBodies/inline_object_4'
+        content:
+          application/json:
+            schema:
+              properties:
+                name:
+                  description: Name of the project.
+                  type: string
+                organizationId:
+                  description: Organization ID this project belongs to.
+                  type: string
+                createdBy:
+                  description: User ID of the person who created the project.
+                  type: string
+                description:
+                  description: Description of the project.
+                  type: string
+              required:
+              - createdBy
+              - description
+              - name
+              - organizationId
+              type: object
+        required: true
+      responses:
+        "201":
+          description: Successfully created the project.
+        "400":
+          description: Invalid input or missing required fields.
+      summary: Create a new project for an organization.
+      tags:
+      - projects
+      x-eov-operation-handler: controllers/ProjectsController
+  /projects/{id}:
+    delete:
+      operationId: deleteProject
+      parameters:
+      - description: The unique ID of the project to delete.
+        explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          description: Successfully deleted the project.
+        "404":
+          description: Project not found.
+      summary: Delete a project by ID.
+      tags:
+      - projects
+      x-eov-operation-handler: controllers/ProjectsController
+    get:
+      operationId: getProjectById
+      parameters:
+      - description: The unique ID of the project.
+        explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          description: Successfully retrieved project details.
+        "404":
+          description: Project not found.
+      summary: Get a project's details by ID.
+      tags:
+      - projects
+      x-eov-operation-handler: controllers/ProjectsController
+    put:
+      operationId: updateProject
+      parameters:
+      - description: The unique ID of the project to update.
+        explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        $ref: '#/components/requestBodies/inline_object_5'
+        content:
+          application/json:
+            schema:
+              properties:
+                name:
+                  description: Updated name of the project.
+                  type: string
+                description:
+                  description: Updated description of the project.
+                  type: string
+              required:
+              - description
+              - name
+              type: object
+        required: true
+      responses:
+        "200":
+          description: Successfully updated the project.
+        "404":
+          description: Project not found.
+      summary: Update a project's details.
+      tags:
+      - projects
+      x-eov-operation-handler: controllers/ProjectsController
+  /organizations:
+    post:
+      operationId: createOrganization
+      requestBody:
+        $ref: '#/components/requestBodies/inline_object_6'
+        content:
+          application/json:
+            schema:
+              properties:
+                name:
+                  description: Name of the organization.
+                  type: string
+              required:
+              - name
+              type: object
+        required: true
+      responses:
+        "201":
+          description: Successfully created the organization.
+        "400":
+          description: Invalid input or missing required fields.
+      summary: Create a new organization.
+      tags:
+      - organization
+      x-eov-operation-handler: controllers/OrganizationController
+  /organizations/{id}:
+    delete:
+      operationId: deleteOrganization
+      parameters:
+      - description: The unique ID of the organization to delete.
+        explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          description: Successfully deleted the organization.
+        "404":
+          description: Organization not found.
+      summary: Delete an organization by ID.
+      tags:
+      - organization
+      x-eov-operation-handler: controllers/OrganizationController
+    get:
+      operationId: getOrganizationById
+      parameters:
+      - description: The unique ID of the organization.
+        explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          description: Successfully retrieved organization details.
+        "404":
+          description: Organization not found.
+      summary: Get an organization's details by ID.
+      tags:
+      - organization
+      x-eov-operation-handler: controllers/OrganizationController
+    put:
+      operationId: updateOrganization
+      parameters:
+      - description: The unique ID of the organization to update.
+        explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        $ref: '#/components/requestBodies/inline_object_7'
+        content:
+          application/json:
+            schema:
+              properties:
+                name:
+                  description: Updated name of the organization.
+                  type: string
+              required:
+              - name
+              type: object
+        required: true
+      responses:
+        "200":
+          description: Successfully updated the organization.
+        "404":
+          description: Organization not found.
+      summary: Update an organization's details.
+      tags:
+      - organization
+      x-eov-operation-handler: controllers/OrganizationController
 components:
   requestBodies:
+    inline_object_1:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/inline_object_1'
+      required: true
     inline_object:
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/inline_object'
+      required: true
+    inline_object_7:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/inline_object_7'
+      required: true
+    inline_object_6:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/inline_object_6'
+      required: true
+    inline_object_5:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/inline_object_5'
+      required: true
+    inline_object_4:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/inline_object_4'
+      required: true
+    inline_object_3:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/inline_object_3'
+      required: true
+    inline_object_2:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/inline_object_2'
+      required: true
   schemas:
-    inline_object:
+    User:
       properties:
-        name:
+        id:
           type: string
         email:
           type: string
-        password:
-          type: string
-        tenantId:
-          type: string
         role:
           type: string
+        organizationId:
+          type: string
+        createdAt:
+          format: date-time
+          type: string
+      type: object
+    Project:
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        organizationId:
+          type: string
+        createdBy:
+          type: string
+        description:
+          type: string
+        createdAt:
+          format: date-time
+          type: string
+      type: object
+    Organization:
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        createdAt:
+          format: date-time
+          type: string
+      type: object
+    inline_object:
+      properties:
+        email:
+          description: User's email address.
+          type: string
+        password:
+          description: User's password.
+          type: string
+        role:
+          description: The role of the user (admin, member).
+          type: string
+        organizationId:
+          description: Organization ID the user belongs to.
+          type: string
+      required:
+      - email
+      - organizationId
+      - password
+      - role
+      type: object
+    inline_object_1:
+      properties:
+        email:
+          description: User's email address.
+          type: string
+        password:
+          description: User's password.
+          type: string
+      required:
+      - email
+      - password
+      type: object
+    inline_response_200:
+      example:
+        token: token
+      properties:
+        token:
+          description: JWT token for authenticated requests.
+          type: string
+      type: object
+    inline_object_2:
+      properties:
+        email:
+          description: The user's email address.
+          type: string
+        role:
+          description: The user's role.
+          type: string
+      required:
+      - email
+      - role
+      type: object
+    inline_object_3:
+      properties:
+        role:
+          description: The new role for the user (admin, member).
+          type: string
+      required:
+      - role
+      type: object
+    inline_object_4:
+      properties:
+        name:
+          description: Name of the project.
+          type: string
+        organizationId:
+          description: Organization ID this project belongs to.
+          type: string
+        createdBy:
+          description: User ID of the person who created the project.
+          type: string
+        description:
+          description: Description of the project.
+          type: string
+      required:
+      - createdBy
+      - description
+      - name
+      - organizationId
+      type: object
+    inline_object_5:
+      properties:
+        name:
+          description: Updated name of the project.
+          type: string
+        description:
+          description: Updated description of the project.
+          type: string
+      required:
+      - description
+      - name
+      type: object
+    inline_object_6:
+      properties:
+        name:
+          description: Name of the organization.
+          type: string
+      required:
+      - name
+      type: object
+    inline_object_7:
+      properties:
+        name:
+          description: Updated name of the organization.
+          type: string
+      required:
+      - name
       type: object

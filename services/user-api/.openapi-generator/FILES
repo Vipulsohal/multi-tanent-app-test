@@ -2,10 +2,14 @@
 README.md
 api/openapi.yaml
 config.js
+controllers/OrganizationController.js
+controllers/ProjectsController.js
 controllers/UserController.js
 controllers/index.js
 index.js
 logger.js
+services/OrganizationService.js
+services/ProjectsService.js
 services/Service.js
 services/UserService.js
 services/index.js

@@ -12,17 +12,7 @@ const createChatRoom = async (request, response) => {
   await Controller.handleRequest(request, response, service.createChatRoom);
 };
 
-const getChatRoomMessages = async (request, response) => {
-  await Controller.handleRequest(request, response, service.getChatRoomMessages);
-};
-
-const sendMessageToChatRoom = async (request, response) => {
-  await Controller.handleRequest(request, response, service.sendMessageToChatRoom);
-};
-
 
 module.exports = {
   createChatRoom,
-  getChatRoomMessages,
-  sendMessageToChatRoom,
 };

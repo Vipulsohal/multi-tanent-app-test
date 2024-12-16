@@ -1,66 +1,195 @@
-
-### **Chat Service**
-openapi: 3.0.1
+openapi: 3.0.0
 info:
-  title: Chat Service
+  title: Chat Service API
+  description: API for creating and managing chat rooms, messages, and real-time communication for a multi-tenant SaaS application.
   version: 1.0.0
 paths:
-  /conversations:
+  /chat/rooms:
     post:
       tags:
-        - chat        
-      summary: Create a conversation
+      - chat    
+      summary: Create a new chat room for an organization.
+      description: This endpoint creates a new chat room for a given organization.
+      operationId: createChatRoom
       requestBody:
+        required: true
         content:
           application/json:
             schema:
               type: object
               properties:
-                users:
-                  type: array
-                  items:
-                    type: string
-                tenantId:
+                name:
                   type: string
+                  description: Name of the chat room.
+                organizationId:
+                  type: string
+                  description: Organization this room belongs to.
+                createdBy:
+                  type: string
+                  description: User ID of the person who created the room.
+                description:
+                  type: string
+                  description: A short description of the room.
+              required:
+                - name
+                - organizationId
+                - createdBy
       responses:
         '201':
-          description: Conversation created
-
-  /messages:
+          description: Chat room created successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: ID of the newly created room.
+                  name:
+                    type: string
+                    description: Name of the chat room.
+                  organizationId:
+                    type: string
+                    description: Organization ID the room belongs to.
+                  createdBy:
+                    type: string
+                    description: User ID of the person who created the room.
+                  description:
+                    type: string
+                    description: Description of the room.
+                  createdAt:
+                    type: string
+                    format: date-time
+                    description: Timestamp of room creation.
+        '400':
+          description: Bad request due to missing or invalid data.
+        
+  /chat/rooms/{id}:
     get:
       tags:
-        - chat    
-      summary: Get messages for a conversation
+      - chat     
+      summary: Retrieve messages for a specific chat room.
+      description: This endpoint retrieves all messages for a specific chat room.
+      operationId: getChatRoomMessages
       parameters:
-        - name: conversationId
-          in: query
+        - name: id
+          in: path
           required: true
-          schema:
-            type: string
-        - name: tenantId
-          in: query
-          required: true
+          description: The ID of the chat room to retrieve messages from.
           schema:
             type: string
       responses:
         '200':
-          description: List of messages
+          description: Successfully retrieved messages for the chat room.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  roomId:
+                    type: string
+                    description: ID of the chat room.
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        messageId:
+                          type: string
+                          description: ID of the message.
+                        senderId:
+                          type: string
+                          description: ID of the user who sent the message.
+                        message:
+                          type: string
+                          description: Content of the message.
+                        timestamp:
+                          type: string
+                          format: date-time
+                          description: Timestamp of the message.
+        '404':
+          description: Room not found.
+        
+  /chat/{roomId}/messages:
     post:
-      summary: Send a message
+      tags:
+      - chat     
+      summary: Send a message to a specific chat room.
+      description: This endpoint sends a message to a specific chat room.
+      operationId: sendMessageToChatRoom
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          description: The ID of the chat room where the message will be sent.
+          schema:
+            type: string
       requestBody:
+        required: true
         content:
           application/json:
             schema:
               type: object
               properties:
-                conversationId:
-                  type: string
                 senderId:
                   type: string
-                text:
+                  description: ID of the user sending the message.
+                message:
                   type: string
-                tenantId:
-                  type: string
+                  description: Content of the message to be sent.
+              required:
+                - senderId
+                - message
       responses:
-        '201':
-          description: Message sent
+        '200':
+          description: Message sent successfully.
+        '400':
+          description: Bad request due to missing or invalid data.
+
+components:
+  schemas:
+    ChatRoom:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID of the chat room.
+        name:
+          type: string
+          description: Name of the chat room.
+        organizationId:
+          type: string
+          description: ID of the organization.
+        createdBy:
+          type: string
+          description: User ID who created the room.
+        description:
+          type: string
+          description: Description of the room.
+        createdAt:
+          type: string
+          format: date-time
+          description: Timestamp when the room was created.
+
+    Message:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID of the message.
+        roomId:
+          type: string
+          description: ID of the chat room the message belongs to.
+        senderId:
+          type: string
+          description: ID of the sender of the message.
+        message:
+          type: string
+          description: Content of the message.
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp when the message was sent.
+
+security:
+  - BearerAuth: []

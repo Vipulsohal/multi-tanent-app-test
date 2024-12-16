@@ -1,14 +1,193 @@
-openapi: 3.0.1
+openapi: 3.0.0
 info:
-  title: User Management Service
+  title: Multi-Tenant SaaS Application API
+  description: API for managing users, roles, projects, and organizations for a multi-tenant SaaS application.
   version: 1.0.0
 paths:
+  # User Service Endpoints
   /users/register:
     post:
       tags:
-        - user    
-      summary: Register a new user
+      - user       
+      summary: Register a new user.
+      operationId: registerUser
       requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: User's email address.
+                password:
+                  type: string
+                  description: User's password.
+                role:
+                  type: string
+                  description: The role of the user (admin, member).
+                organizationId:
+                  type: string
+                  description: Organization ID the user belongs to.
+              required:
+                - email
+                - password
+                - role
+                - organizationId
+      responses:
+        '201':
+          description: Successfully registered the user.
+        '400':
+          description: Invalid input or missing required fields.
+
+  /users/login:
+    post:
+      tags:
+      - user    
+      summary: Authenticate a user and generate a JWT token.
+      operationId: loginUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: User's email address.
+                password:
+                  type: string
+                  description: User's password.
+              required:
+                - email
+                - password
+      responses:
+        '200':
+          description: Successfully authenticated the user and generated a token.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: JWT token for authenticated requests.
+        '401':
+          description: Invalid email or password.
+
+  /users/{id}:
+    get:
+      tags:
+      - user    
+      summary: Get a user's details by ID.
+      operationId: getUserById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The unique ID of the user.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully retrieved user details.
+        '404':
+          description: User not found.
+
+    put:
+      tags:
+      - user    
+      summary: Update a user's details.
+      operationId: updateUser
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The unique ID of the user.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: The user's email address.
+                role:
+                  type: string
+                  description: The user's role.
+              required:
+                - email
+                - role
+      responses:
+        '200':
+          description: Successfully updated the user's details.
+        '404':
+          description: User not found.
+
+    delete:
+      tags:
+      - user    
+      summary: Delete a user by ID.
+      operationId: deleteUser
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The unique ID of the user to delete.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully deleted the user.
+        '404':
+          description: User not found.
+
+  /users/{id}/role:
+    put:
+      tags:
+      - user    
+      summary: Update a user's role.
+      operationId: updateUserRole
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The unique ID of the user.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                role:
+                  type: string
+                  description: The new role for the user (admin, member).
+              required:
+                - role
+      responses:
+        '200':
+          description: Successfully updated the user's role.
+        '404':
+          description: User not found.
+
+  # Project-specific Endpoints
+  /projects:
+    post:
+      tags:
+      - projects    
+      summary: Create a new project for an organization.
+      operationId: createProject
+      requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -16,29 +195,231 @@ paths:
               properties:
                 name:
                   type: string
-                email:
+                  description: Name of the project.
+                organizationId:
                   type: string
-                password:
+                  description: Organization ID this project belongs to.
+                createdBy:
                   type: string
-                tenantId:
+                  description: User ID of the person who created the project.
+                description:
                   type: string
-                role:
-                  type: string
+                  description: Description of the project.
+              required:
+                - name
+                - organizationId
+                - createdBy
+                - description
       responses:
         '201':
-          description: User registered
+          description: Successfully created the project.
+        '400':
+          description: Invalid input or missing required fields.
 
-  /users:
+  /projects/{id}:
     get:
       tags:
-        - user    
-      summary: Get users for a tenant
+      - projects      
+      summary: Get a project's details by ID.
+      operationId: getProjectById
       parameters:
-        - name: tenantId
-          in: query
+        - name: id
+          in: path
           required: true
+          description: The unique ID of the project.
           schema:
             type: string
       responses:
         '200':
-          description: List of users
+          description: Successfully retrieved project details.
+        '404':
+          description: Project not found.
+
+    put:
+      tags:
+      - projects      
+      summary: Update a project's details.
+      operationId: updateProject
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The unique ID of the project to update.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Updated name of the project.
+                description:
+                  type: string
+                  description: Updated description of the project.
+              required:
+                - name
+                - description
+      responses:
+        '200':
+          description: Successfully updated the project.
+        '404':
+          description: Project not found.
+
+    delete:
+      tags:
+      - projects      
+      summary: Delete a project by ID.
+      operationId: deleteProject
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The unique ID of the project to delete.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully deleted the project.
+        '404':
+          description: Project not found.
+
+  # Organization-specific Endpoints
+  /organizations:
+    post:
+      tags:
+      - organization     
+      summary: Create a new organization.
+      operationId: createOrganization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Name of the organization.
+              required:
+                - name
+      responses:
+        '201':
+          description: Successfully created the organization.
+        '400':
+          description: Invalid input or missing required fields.
+
+  /organizations/{id}:
+    get:
+      tags:
+      - organization      
+      summary: Get an organization's details by ID.
+      operationId: getOrganizationById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The unique ID of the organization.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully retrieved organization details.
+        '404':
+          description: Organization not found.
+
+    put:
+      tags:
+      - organization      
+      summary: Update an organization's details.
+      operationId: updateOrganization
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The unique ID of the organization to update.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Updated name of the organization.
+              required:
+                - name
+      responses:
+        '200':
+          description: Successfully updated the organization.
+        '404':
+          description: Organization not found.
+
+    delete:
+      tags:
+      - organization      
+      summary: Delete an organization by ID.
+      operationId: deleteOrganization
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The unique ID of the organization to delete.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully deleted the organization.
+        '404':
+          description: Organization not found.
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+        organizationId:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    Project:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        organizationId:
+          type: string
+        createdBy:
+          type: string
+        description:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    Organization:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        createdAt:
+          type: string
+          format: date-time

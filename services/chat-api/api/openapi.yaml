@@ -1,80 +1,120 @@
-openapi: 3.0.1
+openapi: 3.0.0
 info:
-  title: Chat Service
+  description: API for creating and managing chat rooms, messages, and real-time communication
+    for a multi-tenant SaaS application.
+  title: Chat Service API
   version: 1.0.0
 servers:
 - url: /
+security:
+- BearerAuth: []
 paths:
-  /conversations:
+  /chat/rooms:
     post:
-      operationId: conversationsPOST
+      description: This endpoint creates a new chat room for a given organization.
+      operationId: createChatRoom
       requestBody:
         $ref: '#/components/requestBodies/inline_object'
         content:
           application/json:
             schema:
               properties:
-                users:
-                  items:
-                    type: string
-                  type: array
-                tenantId:
+                name:
+                  description: Name of the chat room.
                   type: string
+                organizationId:
+                  description: Organization this room belongs to.
+                  type: string
+                createdBy:
+                  description: User ID of the person who created the room.
+                  type: string
+                description:
+                  description: A short description of the room.
+                  type: string
+              required:
+              - createdBy
+              - name
+              - organizationId
               type: object
+        required: true
       responses:
         "201":
-          description: Conversation created
-      summary: Create a conversation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_201'
+          description: Chat room created successfully.
+        "400":
+          description: Bad request due to missing or invalid data.
+      summary: Create a new chat room for an organization.
       tags:
       - chat
       x-eov-operation-handler: controllers/ChatController
-  /messages:
+  /chat/rooms/{id}:
     get:
-      operationId: messagesGET
+      description: This endpoint retrieves all messages for a specific chat room.
+      operationId: getChatRoomMessages
       parameters:
-      - explode: true
-        in: query
-        name: conversationId
+      - description: The ID of the chat room to retrieve messages from.
+        explode: false
+        in: path
+        name: id
         required: true
         schema:
           type: string
-        style: form
-      - explode: true
-        in: query
-        name: tenantId
-        required: true
-        schema:
-          type: string
-        style: form
+        style: simple
       responses:
         "200":
-          description: List of messages
-      summary: Get messages for a conversation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+          description: Successfully retrieved messages for the chat room.
+        "404":
+          description: Room not found.
+      summary: Retrieve messages for a specific chat room.
       tags:
       - chat
       x-eov-operation-handler: controllers/ChatController
+  /chat/{roomId}/messages:
     post:
-      operationId: messagesPOST
+      description: This endpoint sends a message to a specific chat room.
+      operationId: sendMessageToChatRoom
+      parameters:
+      - description: The ID of the chat room where the message will be sent.
+        explode: false
+        in: path
+        name: roomId
+        required: true
+        schema:
+          type: string
+        style: simple
       requestBody:
         $ref: '#/components/requestBodies/inline_object_1'
         content:
           application/json:
             schema:
               properties:
-                conversationId:
-                  type: string
                 senderId:
+                  description: ID of the user sending the message.
                   type: string
-                text:
+                message:
+                  description: Content of the message to be sent.
                   type: string
-                tenantId:
-                  type: string
+              required:
+              - message
+              - senderId
               type: object
+        required: true
       responses:
-        "201":
-          description: Message sent
-      summary: Send a message
-      x-eov-operation-handler: controllers/DefaultController
+        "200":
+          description: Message sent successfully.
+        "400":
+          description: Bad request due to missing or invalid data.
+      summary: Send a message to a specific chat room.
+      tags:
+      - chat
+      x-eov-operation-handler: controllers/ChatController
 components:
   requestBodies:
     inline_object_1:
@@ -82,29 +122,154 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/inline_object_1'
+      required: true
     inline_object:
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/inline_object'
+      required: true
   schemas:
-    inline_object_1:
+    ChatRoom:
       properties:
-        conversationId:
+        id:
+          description: ID of the chat room.
+          type: string
+        name:
+          description: Name of the chat room.
+          type: string
+        organizationId:
+          description: ID of the organization.
+          type: string
+        createdBy:
+          description: User ID who created the room.
+          type: string
+        description:
+          description: Description of the room.
+          type: string
+        createdAt:
+          description: Timestamp when the room was created.
+          format: date-time
+          type: string
+      type: object
+    Message:
+      properties:
+        id:
+          description: ID of the message.
+          type: string
+        roomId:
+          description: ID of the chat room the message belongs to.
           type: string
         senderId:
+          description: ID of the sender of the message.
           type: string
-        text:
+        message:
+          description: Content of the message.
           type: string
-        tenantId:
+        timestamp:
+          description: Timestamp when the message was sent.
+          format: date-time
           type: string
       type: object
     inline_object:
       properties:
-        users:
-          items:
-            type: string
-          type: array
-        tenantId:
+        name:
+          description: Name of the chat room.
           type: string
+        organizationId:
+          description: Organization this room belongs to.
+          type: string
+        createdBy:
+          description: User ID of the person who created the room.
+          type: string
+        description:
+          description: A short description of the room.
+          type: string
+      required:
+      - createdBy
+      - name
+      - organizationId
+      type: object
+    inline_response_201:
+      example:
+        organizationId: organizationId
+        createdAt: 2000-01-23T04:56:07.000+00:00
+        createdBy: createdBy
+        name: name
+        description: description
+        id: id
+      properties:
+        id:
+          description: ID of the newly created room.
+          type: string
+        name:
+          description: Name of the chat room.
+          type: string
+        organizationId:
+          description: Organization ID the room belongs to.
+          type: string
+        createdBy:
+          description: User ID of the person who created the room.
+          type: string
+        description:
+          description: Description of the room.
+          type: string
+        createdAt:
+          description: Timestamp of room creation.
+          format: date-time
+          type: string
+      type: object
+    inline_response_200_messages:
+      example:
+        senderId: senderId
+        messageId: messageId
+        message: message
+        timestamp: 2000-01-23T04:56:07.000+00:00
+      properties:
+        messageId:
+          description: ID of the message.
+          type: string
+        senderId:
+          description: ID of the user who sent the message.
+          type: string
+        message:
+          description: Content of the message.
+          type: string
+        timestamp:
+          description: Timestamp of the message.
+          format: date-time
+          type: string
+      type: object
+    inline_response_200:
+      example:
+        messages:
+        - senderId: senderId
+          messageId: messageId
+          message: message
+          timestamp: 2000-01-23T04:56:07.000+00:00
+        - senderId: senderId
+          messageId: messageId
+          message: message
+          timestamp: 2000-01-23T04:56:07.000+00:00
+        roomId: roomId
+      properties:
+        roomId:
+          description: ID of the chat room.
+          type: string
+        messages:
+          items:
+            $ref: '#/components/schemas/inline_response_200_messages'
+          type: array
+      type: object
+    inline_object_1:
+      properties:
+        senderId:
+          description: ID of the user sending the message.
+          type: string
+        message:
+          description: Content of the message to be sent.
+          type: string
+      required:
+      - message
+      - senderId
       type: object

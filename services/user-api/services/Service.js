@@ -4,8 +4,7 @@ class Service {
   }
 
   static successResponse(payload, code = 200) {
-    console.log(payload)
-    return { ...payload, code };
+    return { payload, code };
   }
 }
 
