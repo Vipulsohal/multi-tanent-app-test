@@ -1,13 +1,5 @@
 /* eslint-disable no-unused-vars */
-const jwt = require('jsonwebtoken');
 const Service = require('./Service');
-const secretKey = "testkey"; // 
-const options = {
-  expiresIn: "1h", // Token expires in 1 hour
-  issuer: "your-app",
-};
-
-
 
 /**
 * Delete a user by ID.
@@ -52,28 +44,14 @@ const getUserById = ({ id }) => new Promise(
 /**
 * Authenticate a user and generate a JWT token.
 *
-* inlineObject1 InlineObject1
+* inlineObject1 InlineObject1 
 * returns inline_response_200
 * */
-const loginUser = (data) => new Promise(
+const loginUser = ({ inlineObject1 }) => new Promise(
   async (resolve, reject) => {
-    console.log(typeof (data))
     try {
-      var emailId = data.body.email;
-      console.log(emailId)
-      const token = jwt.sign({
-        id: '1',
-        email: emailId,
-        role: emailId.includes('admin') ? 'admin' : 'member',
-        organizationId: 'org1',
-      }, secretKey, options);
-
-      console.log("Generated JWT Token:", token);
       resolve(Service.successResponse({
-        id: '1',
-        email: emailId,
-        role: emailId.includes('admin') ? 'admin' : 'member',
-        organizationId: 'org1',
+        inlineObject1,
       }));
     } catch (e) {
       reject(Service.rejectResponse(
@@ -86,7 +64,7 @@ const loginUser = (data) => new Promise(
 /**
 * Register a new user.
 *
-* inlineObject InlineObject
+* inlineObject InlineObject 
 * no response value expected for this operation
 * */
 const registerUser = ({ inlineObject }) => new Promise(
@@ -107,7 +85,7 @@ const registerUser = ({ inlineObject }) => new Promise(
 * Update a user's details.
 *
 * id String The unique ID of the user.
-* inlineObject2 InlineObject2
+* inlineObject2 InlineObject2 
 * no response value expected for this operation
 * */
 const updateUser = ({ id, inlineObject2 }) => new Promise(
@@ -129,7 +107,7 @@ const updateUser = ({ id, inlineObject2 }) => new Promise(
 * Update a user's role.
 *
 * id String The unique ID of the user.
-* inlineObject3 InlineObject3
+* inlineObject3 InlineObject3 
 * no response value expected for this operation
 * */
 const updateUserRole = ({ id, inlineObject3 }) => new Promise(

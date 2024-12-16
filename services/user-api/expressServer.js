@@ -46,7 +46,10 @@ class ExpressServer {
         validateResponses: false, // false by default
         validateSecurity: {
           handlers: {
-            UserKeyAuth: () => { },
+            UserKeyAuth: () => {
+              //place the logic to handle user's role based acccess
+              return true
+            },
           },
         },
       }),

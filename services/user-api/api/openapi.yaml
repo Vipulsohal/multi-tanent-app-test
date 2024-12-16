@@ -94,9 +94,13 @@ paths:
           description: Successfully deleted the user.
         "404":
           description: User not found.
+      security:
+      - UserKeyAuth: []
       summary: Delete a user by ID.
       tags:
       - user
+      x-roles:
+      - admin
       x-eov-operation-handler: controllers/UserController
     get:
       operationId: getUserById
@@ -185,9 +189,13 @@ paths:
           description: Successfully updated the user's role.
         "404":
           description: User not found.
+      security:
+      - UserKeyAuth: []
       summary: Update a user's role.
       tags:
       - user
+      x-roles:
+      - admin
       x-eov-operation-handler: controllers/UserController
   /projects:
     post:
@@ -222,9 +230,14 @@ paths:
           description: Successfully created the project.
         "400":
           description: Invalid input or missing required fields.
+      security:
+      - UserKeyAuth: []
       summary: Create a new project for an organization.
       tags:
       - projects
+      x-roles:
+      - admin
+      - org_admin
       x-eov-operation-handler: controllers/ProjectsController
   /projects/{id}:
     delete:
@@ -243,9 +256,13 @@ paths:
           description: Successfully deleted the project.
         "404":
           description: Project not found.
+      security:
+      - UserKeyAuth: []
       summary: Delete a project by ID.
       tags:
       - projects
+      x-roles:
+      - admin
       x-eov-operation-handler: controllers/ProjectsController
     get:
       operationId: getProjectById
@@ -263,9 +280,14 @@ paths:
           description: Successfully retrieved project details.
         "404":
           description: Project not found.
+      security:
+      - UserKeyAuth: []
       summary: Get a project's details by ID.
       tags:
       - projects
+      x-roles:
+      - admin
+      - org_admin
       x-eov-operation-handler: controllers/ProjectsController
     put:
       operationId: updateProject
@@ -300,9 +322,14 @@ paths:
           description: Successfully updated the project.
         "404":
           description: Project not found.
+      security:
+      - UserKeyAuth: []
       summary: Update a project's details.
       tags:
       - projects
+      x-roles:
+      - admin
+      - org_admin
       x-eov-operation-handler: controllers/ProjectsController
   /organizations:
     post:
@@ -325,9 +352,13 @@ paths:
           description: Successfully created the organization.
         "400":
           description: Invalid input or missing required fields.
+      security:
+      - UserKeyAuth: []
       summary: Create a new organization.
       tags:
       - organization
+      x-roles:
+      - admin
       x-eov-operation-handler: controllers/OrganizationController
   /organizations/{id}:
     delete:
@@ -346,9 +377,13 @@ paths:
           description: Successfully deleted the organization.
         "404":
           description: Organization not found.
+      security:
+      - UserKeyAuth: []
       summary: Delete an organization by ID.
       tags:
       - organization
+      x-roles:
+      - admin
       x-eov-operation-handler: controllers/OrganizationController
     get:
       operationId: getOrganizationById
@@ -366,9 +401,13 @@ paths:
           description: Successfully retrieved organization details.
         "404":
           description: Organization not found.
+      security:
+      - UserKeyAuth: []
       summary: Get an organization's details by ID.
       tags:
       - organization
+      x-roles:
+      - admin
       x-eov-operation-handler: controllers/OrganizationController
     put:
       operationId: updateOrganization
@@ -399,9 +438,13 @@ paths:
           description: Successfully updated the organization.
         "404":
           description: Organization not found.
+      security:
+      - UserKeyAuth: []
       summary: Update an organization's details.
       tags:
       - organization
+      x-roles:
+      - admin
       x-eov-operation-handler: controllers/OrganizationController
 components:
   requestBodies:
@@ -602,3 +645,8 @@ components:
       required:
       - name
       type: object
+  securitySchemes:
+    UserKeyAuth:
+      in: header
+      name: x-auth-key
+      type: apiKey

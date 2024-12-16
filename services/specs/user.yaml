@@ -41,6 +41,7 @@ paths:
         '400':
           description: Invalid input or missing required fields.
 
+
   /users/login:
     post:
       tags:
@@ -75,8 +76,7 @@ paths:
                     type: string
                     description: JWT token for authenticated requests.
         '401':
-          description: Invalid email or password.
-          
+          description: Invalid email or password.        
 
   /users/{id}:
     get:
@@ -148,6 +148,9 @@ paths:
           description: Successfully deleted the user.
         '404':
           description: User not found.
+      security:
+        - UserKeyAuth: []
+      x-roles: ["admin"]
 
   /users/{id}/role:
     put:
@@ -179,6 +182,9 @@ paths:
           description: Successfully updated the user's role.
         '404':
           description: User not found.
+      security:
+        - UserKeyAuth: []
+      x-roles: ["admin"]
 
   # Project-specific Endpoints
   /projects:
@@ -216,6 +222,9 @@ paths:
           description: Successfully created the project.
         '400':
           description: Invalid input or missing required fields.
+      security:
+        - UserKeyAuth: []
+      x-roles: ["admin", "org_admin"]
 
   /projects/{id}:
     get:
@@ -235,6 +244,9 @@ paths:
           description: Successfully retrieved project details.
         '404':
           description: Project not found.
+      security:
+        - UserKeyAuth: []
+      x-roles: ["admin", "org_admin"]
 
     put:
       tags:
@@ -269,6 +281,9 @@ paths:
           description: Successfully updated the project.
         '404':
           description: Project not found.
+      security:
+        - UserKeyAuth: []
+      x-roles: ["admin", "org_admin"]
 
     delete:
       tags:
@@ -287,6 +302,9 @@ paths:
           description: Successfully deleted the project.
         '404':
           description: Project not found.
+      security:
+        - UserKeyAuth: []
+      x-roles: ["admin"]
 
   # Organization-specific Endpoints
   /organizations:
@@ -312,6 +330,9 @@ paths:
           description: Successfully created the organization.
         '400':
           description: Invalid input or missing required fields.
+      security:
+        - UserKeyAuth: []
+      x-roles: ["admin"]
 
   /organizations/{id}:
     get:
@@ -331,6 +352,9 @@ paths:
           description: Successfully retrieved organization details.
         '404':
           description: Organization not found.
+      security:
+        - UserKeyAuth: []
+      x-roles: ["admin"]
 
     put:
       tags:
@@ -361,6 +385,9 @@ paths:
           description: Successfully updated the organization.
         '404':
           description: Organization not found.
+      security:
+        - UserKeyAuth: []
+      x-roles: ["admin"]
 
     delete:
       tags:
@@ -379,8 +406,16 @@ paths:
           description: Successfully deleted the organization.
         '404':
           description: Organization not found.
+      security:
+        - UserKeyAuth: []
+      x-roles: ["admin"]
 
 components:
+  securitySchemes:
+    UserKeyAuth:
+      type: apiKey
+      name: x-auth-key
+      in: header
   schemas:
     User:
       type: object
